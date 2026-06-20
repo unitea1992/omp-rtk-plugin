@@ -30,10 +30,10 @@ Restart `omp`, then verify:
 
 ### Commands
 
-- `/rtk-gain [safe flags]` — show RTK token savings. Reset flags are rejected.
+- `/rtk-toggle [on|off|status]` — toggle rewriting on/off for the current session. No argument flips the current state.
 - `/rtk-status` — show rewrite status, RTK availability, and disable flags.
 - `/rtk-doctor` — run basic RTK and rewrite diagnostics.
-- `/rtk-toggle [on|off|status]` — toggle rewriting for the current oh-my-pi session.
+- `/rtk-gain [safe flags]` — display `rtk gain` output. Reset flags are rejected.
 
 ### Environment variables
 
@@ -80,10 +80,10 @@ omp plugin install github:unitea1992/omp-rtk-plugin
 
 ### コマンド
 
-- `/rtk-gain [safe flags]` — RTK の token savings を表示します。reset 系 flag は拒否します。
+- `/rtk-toggle [on|off|status]` — 現在の session で rewrite を切り替えます。引数なしで現在状態を反転します。
 - `/rtk-status` — rewrite 状態、RTK availability、disable flag を表示します。
 - `/rtk-doctor` — RTK と rewrite の基本診断を実行します。
-- `/rtk-toggle [on|off|status]` — 現在の oh-my-pi session だけで rewrite を切り替えます。
+- `/rtk-gain [safe flags]` — `rtk gain` の出力を表示します。reset 系 flag は拒否します。
 
 ### 環境変数
 

@@ -102,9 +102,10 @@ export function sanitizeGainArgs(rawArgs: string): { ok: true; args: string[] } 
   return { ok: true, args };
 }
 
-export function parseToggleArg(rawArgs: string): "on" | "off" | "status" | "invalid" {
+export function parseToggleArg(rawArgs: string): "on" | "off" | "toggle" | "status" | "invalid" {
   const arg = rawArgs.trim();
-  if (arg === "" || arg === "status") return "status";
+  if (arg === "") return "toggle";
+  if (arg === "status") return "status";
   if (arg === "on" || arg === "off") return arg;
   return "invalid";
 }
@@ -211,11 +212,9 @@ function formatStatus(localEnabled: boolean, availability: RtkAvailability): str
   const disableState = getDisableState();
   return [
     `Local toggle: ${localEnabled ? "on" : "off"}`,
-    formatDisableState(disableState),
     `Effective rewrite: ${effectiveEnabled(localEnabled, availability, disableState) ? "enabled" : "disabled"}`,
     formatAvailability(availability),
-    "Rewrite method: rtk rewrite",
-    "Injection method: ExtensionAPI tool_call input mutation",
+    formatDisableState(disableState),
   ].join("\n");
 }
 
@@ -340,8 +339,13 @@ export default async function ompRtkPlugin(pi: ExtensionAPI): Promise<void> {
         return;
       }
       if (command === "on") localEnabled = true;
-      if (command === "off") localEnabled = false;
-      showCommandOutput(pi, ctx, "RTK toggle", formatStatus(localEnabled, availability));
+      else if (command === "off") localEnabled = false;
+      else if (command === "toggle") localEnabled = !localEnabled;
+      else if (command === "status") {
+        showCommandOutput(pi, ctx, "RTK status", formatStatus(localEnabled, availability));
+        return;
+      }
+      showCommandOutput(pi, ctx, "RTK toggle", `RTK rewrite: ${localEnabled ? "enabled" : "disabled"}`);
     },
   });
 }

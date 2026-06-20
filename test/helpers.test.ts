@@ -82,8 +82,11 @@ describe("sanitizeGainArgs", () => {
 });
 
 describe("parseToggleArg", () => {
-  test("defaults to status", () => {
-    expect(parseToggleArg("")).toBe("status");
+  test("empty string returns toggle", () => {
+    expect(parseToggleArg("")).toBe("toggle");
+  });
+
+  test("status returns status", () => {
     expect(parseToggleArg("status")).toBe("status");
   });
 
@@ -167,5 +170,23 @@ describe("extension wiring", () => {
 
     expect(messages).toHaveLength(1);
     expect(messages[0].message).toMatchObject({ customType: "omp-rtk-plugin.output", display: true });
+  });
+
+  test("rtk-toggle flips localEnabled", async () => {
+    const { pi, commands } = createFakePi();
+    await ompRtkPlugin(pi as any);
+
+    const toggle = commands.get("rtk-toggle")!;
+    const noop = { ui: { notify: () => undefined } };
+
+    // Initially enabled (localEnabled = true), toggle flips to false
+    await toggle.handler("", noop);
+    // Second toggle flips back to true
+    await toggle.handler("", noop);
+    // "on" sets to true explicitly
+    await toggle.handler("off", noop);
+    await toggle.handler("on", noop);
+    // status does not change state
+    await toggle.handler("status", noop);
   });
 });
